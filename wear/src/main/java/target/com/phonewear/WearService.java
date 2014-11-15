@@ -52,17 +52,17 @@ public class WearService extends WearableListenerService {
 
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {
-        Log.d(TAG, "onDataChanged: " + dataEvents);
-        final List<DataEvent> events = FreezableUtils.freezeIterable(dataEvents);
-        dataEvents.close();
-        if(!mGoogleApiClient.isConnected()) {
-            ConnectionResult connectionResult = mGoogleApiClient
-                    .blockingConnect(30, TimeUnit.SECONDS);
-            if (!connectionResult.isSuccess()) {
-                Log.e(TAG, "DataLayerListenerService failed to connect to GoogleApiClient.");
-                return;
-            }
-        }
+//        Log.d(TAG, "onDataChanged: " + dataEvents);
+//        final List<DataEvent> events = FreezableUtils.freezeIterable(dataEvents);
+//        dataEvents.close();
+//        if(!mGoogleApiClient.isConnected()) {
+//            ConnectionResult connectionResult = mGoogleApiClient
+//                    .blockingConnect(30, TimeUnit.SECONDS);
+//            if (!connectionResult.isSuccess()) {
+//                Log.e(TAG, "DataLayerListenerService failed to connect to GoogleApiClient.");
+//                return;
+//            }
+//        }
 
 //        // Loop through the events and send a message back to the node that created the data item.
 //        for (DataEvent event : events) {

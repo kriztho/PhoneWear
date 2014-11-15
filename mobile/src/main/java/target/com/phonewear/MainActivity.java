@@ -236,7 +236,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                         });
                     }
                 }
-
             } else if (event.getType() == DataEvent.TYPE_DELETED) {
                 Log.d(TAG, "DataItem deleted: " + event.getDataItem().getUri());
 
@@ -250,6 +249,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         private ArrayList<DataMap> mItems = new ArrayList<DataMap>();
         private final Context mContext;
 
+        private boolean sync = true;
+
         public ItemAdapter(Context context) {
             mContext = context;
         }
@@ -261,7 +262,9 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
         public void set(int index, DataMap map) {
             mItems.set(index, map);
+            sync = false;
             notifyDataSetChanged();
+            Log.d(TAG, "***** SET VALUE");
         }
 
         @Override
@@ -291,23 +294,33 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 convertView.setTag(holder);
                 holder.text = (TextView) convertView.findViewById(R.id.text);
                 holder.isChecked = (CheckBox) convertView.findViewById(R.id.checkbox);
-                runOnUiThread(new Runnable() {
+                holder.isChecked.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
-                    public void run() {
-                        holder.isChecked.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                            @Override
-                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                                item.putBoolean("isChecked", isChecked);
-                                syncItem("/0", "/"+position, item);
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                        if (item.getBoolean("isChecked") != isChecked) {
+
+                            //Update the model
+                            item.putBoolean("isChecked", isChecked);
+
+                            //Sync only if changed by user
+                            if (sync) {
+                                //syncItem("/0", "/" + position, item);
+                                Log.d(TAG, "***** SYNC VALUE");
                             }
-                        });
+
+                            sync = true;
+                        }
                     }
                 });
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
+
+            if(holder.isChecked.isChecked() != item.get("isChecked"))
+                holder.isChecked.setChecked(item.getBoolean("isChecked"));
             holder.text.setText(item.getString("text"));
-            holder.isChecked.setChecked(item.getBoolean("isChecked"));
+
             return convertView;
         }
 
